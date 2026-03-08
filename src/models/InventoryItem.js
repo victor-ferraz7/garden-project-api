@@ -1,0 +1,35 @@
+const mongoose = require("mongoose");
+
+// 4.3 — Schema de InventoryItem: quantity/minStock numéricos, índices name/category
+
+const inventoryItemSchema = new mongoose.Schema(
+  {
+    id: { type: String, required: true, unique: true },
+    name: { type: String, required: true },
+    category: { type: String, required: true },
+    quantity: {
+      type: Number,
+      required: true,
+      min: [0, "quantity não pode ser negativa"],
+    },
+    unit: { type: String, required: true },
+    minStock: {
+      type: Number,
+      required: true,
+      min: [0, "minStock não pode ser negativo"],
+    },
+    notes: { type: String, default: "" },
+    lastUpdated: { type: Date, required: true },
+  },
+  {
+    timestamps: true,
+    collection: "inventoryItems",
+  }
+);
+
+inventoryItemSchema.index({ name: 1 });
+inventoryItemSchema.index({ category: 1 });
+
+const InventoryItem = mongoose.model("InventoryItem", inventoryItemSchema);
+
+module.exports = InventoryItem;
