@@ -7,6 +7,7 @@ const GetGardenPlants = require("./GetGardenPlants");
 const GetGardenPlantById = require("./GetGardenPlantById");
 const AddPlantToGarden = require("./AddPlantToGarden");
 const UpdateGardenPlant = require("./UpdateGardenPlant");
+const DeleteGardenPlant = require("./DeleteGardenPlant");
 
 module.exports = {
   ListGardens,
@@ -18,4 +19,5 @@ module.exports = {
   GetGardenPlantById,
   AddPlantToGarden,
   UpdateGardenPlant,
+  DeleteGardenPlant,
 };

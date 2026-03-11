@@ -10,6 +10,7 @@ const LOG_TYPES = [
   "fungi",
   "transplant",
   "flush",
+  "harvest",
   "note",
   "photo",
 ];
@@ -40,6 +41,8 @@ const logSchema = new mongoose.Schema(
     dosage: { type: String, default: null },
     application_mode: { type: String, default: null },
     safety_period: { type: String, default: null },
+    // harvest
+    wet_weight: { type: String, default: null },
   },
   {
     timestamps: true,

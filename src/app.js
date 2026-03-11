@@ -32,6 +32,7 @@ app.get("/api", (req, res) => {
         "DELETE /api/gardens/:id": "Remove jardim",
         "POST /api/gardens/:id/plants": "Adiciona planta",
         "PATCH /api/gardens/:id/plants/:plantId": "Atualiza planta",
+        "DELETE /api/gardens/:id/plants/:plantId": "Remove planta",
       },
       logs: {
         "GET /api/logs": "Lista logs. Query: gardenId, type, fromDate, toDate, limit, skip",

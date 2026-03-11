@@ -64,6 +64,20 @@ class GardenRepositoryMongo extends GardenRepository {
     const updated = garden.plants[idx];
     return updated.toObject ? updated.toObject() : updated;
   }
+
+  async deletePlant(gardenId, plantId) {
+    const garden = await Garden.findOne({ id: gardenId });
+    if (!garden) return false;
+
+    const initialLength = garden.plants.length;
+    garden.plants = garden.plants.filter((p) => p.id !== plantId);
+
+    if (garden.plants.length === initialLength) return false;
+
+    garden.plantsCount = garden.plants.length;
+    await garden.save();
+    return true;
+  }
 }
 
 module.exports = GardenRepositoryMongo;
