@@ -37,8 +37,8 @@ app.get("/api", (req, res) => {
       logs: {
         "GET /api/logs": "Lista logs. Query: gardenId, type, fromDate, toDate, limit, skip",
         "GET /api/logs/:id": "Log por _id (MongoDB)",
-        "POST /api/logs": "Cria log",
-        "PUT /api/logs/:id": "Atualiza log",
+        "POST /api/logs": "Cria log (campos técnicos suportados: ph, ec, runoff_ec, solution_temp, vpd, ppfd, co2_ppm, photoperiod, water_liters, nutrients_ml, substrate_composition, fertilizer_type, fertilization_date, training_type, technique_applied, intensity, plant_height_cm, product, dosage, application_mode, pest_inspection, safety_period, stress_observation, harvest_forecast_date, plant_cost, wet_weight, note)",
+        "PUT /api/logs/:id": "Atualiza log (mesmos campos técnicos do create)",
         "DELETE /api/logs/:id": "Remove log",
       },
       inventory: {

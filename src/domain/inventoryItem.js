@@ -8,6 +8,14 @@
  * @property {number} quantity
  * @property {string} unit
  * @property {number} minStock
+ * @property {string} [brand]
+ * @property {string} [supplier]
+ * @property {string} [batchCode]
+ * @property {string} [storageLocation]
+ * @property {number|null} [costPerUnit]
+ * @property {Date|null} [expiryDate]
+ * @property {Date|null} [lastRestockDate]
+ * @property {string} [restockSuggestion]
  * @property {string} [notes]
  * @property {Date} lastUpdated
  */
