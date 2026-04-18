@@ -18,6 +18,7 @@ const {
   GetGardenPlantById,
   AddPlantToGarden,
   UpdateGardenPlant,
+  DeleteGardenPlant,
 } = require("../use-cases/gardens");
 
 const {
@@ -52,6 +53,7 @@ const getGardenPlants = new GetGardenPlants(gardenRepository);
 const getGardenPlantById = new GetGardenPlantById(gardenRepository);
 const addPlantToGarden = new AddPlantToGarden(gardenRepository);
 const updateGardenPlant = new UpdateGardenPlant(gardenRepository);
+const deleteGardenPlant = new DeleteGardenPlant(gardenRepository);
 
 // Use cases - Logs
 const listLogs = new ListLogs(logRepository);
@@ -78,6 +80,7 @@ module.exports = {
   getGardenPlantById,
   addPlantToGarden,
   updateGardenPlant,
+  deleteGardenPlant,
   listLogs,
   getLogById,
   createLog,

@@ -86,7 +86,6 @@ const gardenSchema = new mongoose.Schema(
 gardenSchema.index({ phase: 1 });
 gardenSchema.index({ environment: 1 });
 gardenSchema.index({ startDate: 1 });
-gardenSchema.index({ id: 1 });
 
 const Garden = mongoose.model("Garden", gardenSchema);
 

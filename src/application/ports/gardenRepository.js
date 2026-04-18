@@ -65,6 +65,15 @@ class GardenRepository {
   async updatePlant(gardenId, plantId, update) {
     throw new Error("GardenRepository.updatePlant não implementado");
   }
+
+  /**
+   * @param {string} gardenId
+   * @param {string} plantId
+   * @returns {Promise<boolean>} true se removeu algo
+   */
+  async deletePlant(gardenId, plantId) {
+    throw new Error("GardenRepository.deletePlant não implementado");
+  }
 }
 
 module.exports = GardenRepository;

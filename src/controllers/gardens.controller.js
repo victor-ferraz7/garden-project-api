@@ -102,6 +102,18 @@ async function updatePlant(req, res, next) {
   }
 }
 
+async function removePlant(req, res, next) {
+  try {
+    await container.deleteGardenPlant.execute({
+      gardenId: req.params.id,
+      plantId: req.params.plantId,
+    });
+    res.status(204).send();
+  } catch (err) {
+    next(err);
+  }
+}
+
 module.exports = {
   list,
   getById,
@@ -112,4 +124,5 @@ module.exports = {
   getPlantById,
   addPlant,
   updatePlant,
+  removePlant,
 };
