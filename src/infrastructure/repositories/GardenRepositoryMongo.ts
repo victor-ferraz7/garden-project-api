@@ -42,7 +42,7 @@ class GardenRepositoryMongo extends GardenRepository {
     const doc = await Garden.findOneAndUpdate(
       { id, ownerId: oid },
       { $set: update },
-      { new: true, runValidators: true }
+      { returnDocument: "after", runValidators: true }
     ).lean();
     return doc || null;
   }

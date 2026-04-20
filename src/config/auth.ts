@@ -17,9 +17,19 @@ function getRefreshSecret() {
   return s;
 }
 
+function getJwtIssuer() {
+  return process.env.JWT_ISSUER || "gp-api";
+}
+
+function getJwtAudience() {
+  return process.env.JWT_AUDIENCE || "gp-api-clients";
+}
+
 module.exports = {
   getAccessSecret,
   getRefreshSecret,
+  getJwtIssuer,
+  getJwtAudience,
   accessExpires: process.env.JWT_ACCESS_EXPIRES || "15m",
   refreshExpires: process.env.JWT_REFRESH_EXPIRES || "7d",
 };

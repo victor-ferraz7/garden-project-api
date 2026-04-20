@@ -16,11 +16,10 @@ class LogoutUser {
       throw new UnauthorizedError("Refresh token ausente");
     }
     const { jti } = await verifyRefreshToken(refreshToken);
-    const session = await this.refreshTokenRepository.findValidByJti(jti, refreshToken);
-    if (!session) {
+    const revoked = await this.refreshTokenRepository.revokeIfActive(jti, refreshToken);
+    if (!revoked) {
       throw new UnauthorizedError("Sessão inválida");
     }
-    await this.refreshTokenRepository.revoke(jti, null);
   }
 }
 

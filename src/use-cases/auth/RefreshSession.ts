@@ -24,12 +24,11 @@ class RefreshSession {
       throw new UnauthorizedError("Refresh token ausente");
     }
     const { sub, jti } = await verifyRefreshToken(refreshToken);
-    const session = await this.refreshTokenRepository.findValidByJti(jti, refreshToken);
+    const nextJti = createJti();
+    const session = await this.refreshTokenRepository.consumeForRotation(jti, refreshToken, nextJti);
     if (!session) {
       throw new UnauthorizedError("Sessão inválida");
     }
-    const nextJti = createJti();
-    await this.refreshTokenRepository.revoke(jti, nextJti);
     const accessToken = await signAccessToken(sub);
     const nextRefresh = await signRefreshToken(sub, nextJti);
     const { exp } = decodeJwt(nextRefresh);

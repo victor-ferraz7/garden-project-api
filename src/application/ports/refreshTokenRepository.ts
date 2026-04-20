@@ -26,6 +26,27 @@ class RefreshTokenRepository {
   }
 
   /**
+   * Revoga atomicamente uma sessão ativa e devolve userId (rotação de refresh).
+   * @param {string} jti
+   * @param {string} plainRefreshToken
+   * @param {string} replacedByJti
+   * @returns {Promise<{ userId: import("mongoose").Types.ObjectId }|null>}
+   */
+  async consumeForRotation(jti, plainRefreshToken, replacedByJti) {
+    throw new Error("RefreshTokenRepository.consumeForRotation não implementado");
+  }
+
+  /**
+   * Revoga atomicamente se ainda ativa e o hash coincide (logout).
+   * @param {string} jti
+   * @param {string} plainRefreshToken
+   * @returns {Promise<boolean>}
+   */
+  async revokeIfActive(jti, plainRefreshToken) {
+    throw new Error("RefreshTokenRepository.revokeIfActive não implementado");
+  }
+
+  /**
    * @param {string} jti
    * @param {string|null} replacedByJti
    * @returns {Promise<void>}

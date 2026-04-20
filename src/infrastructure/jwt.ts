@@ -1,6 +1,13 @@
 const crypto = require("crypto");
 const { SignJWT, jwtVerify } = require("jose");
-const { getAccessSecret, getRefreshSecret, accessExpires, refreshExpires } = require("../config/auth");
+const {
+  getAccessSecret,
+  getRefreshSecret,
+  getJwtIssuer,
+  getJwtAudience,
+  accessExpires,
+  refreshExpires,
+} = require("../config/auth");
 const { UnauthorizedError } = require("../domain/errors");
 
 const enc = new TextEncoder();
@@ -21,6 +28,8 @@ async function signAccessToken(sub) {
   return new SignJWT({ typ: "access" })
     .setProtectedHeader({ alg: "HS256" })
     .setSubject(sub)
+    .setIssuer(getJwtIssuer())
+    .setAudience(getJwtAudience())
     .setIssuedAt()
     .setExpirationTime(accessExpires)
     .sign(accessSecretKey());
@@ -35,6 +44,8 @@ async function signRefreshToken(sub, jti) {
   return new SignJWT({ typ: "refresh", jti })
     .setProtectedHeader({ alg: "HS256" })
     .setSubject(sub)
+    .setIssuer(getJwtIssuer())
+    .setAudience(getJwtAudience())
     .setJti(jti)
     .setIssuedAt()
     .setExpirationTime(refreshExpires)
@@ -56,6 +67,8 @@ async function verifyAccessToken(token) {
   try {
     const { payload } = await jwtVerify(token, accessSecretKey(), {
       algorithms: ["HS256"],
+      issuer: getJwtIssuer(),
+      audience: getJwtAudience(),
     });
     if (payload.typ !== "access") throw new UnauthorizedError("Token inválido");
     if (!payload.sub) throw new UnauthorizedError("Token inválido");
@@ -74,6 +87,8 @@ async function verifyRefreshToken(token) {
   try {
     const { payload } = await jwtVerify(token, refreshSecretKey(), {
       algorithms: ["HS256"],
+      issuer: getJwtIssuer(),
+      audience: getJwtAudience(),
     });
     if (payload.typ !== "refresh") throw new UnauthorizedError("Refresh token inválido");
     const jti = payload.jti ? String(payload.jti) : null;

@@ -63,18 +63,20 @@ npm run test:integration  # Playwright (API; ver abaixo)
 npm run test:all          # Vitest + Playwright
 ```
 
+**CI (GitHub):** em cada PR e push a `main`/`develop`, o workflow [`.github/workflows/ci.yml`](.github/workflows/ci.yml) executa `npm ci`, build, Vitest e, em job separado, Playwright com Chromium. Checklist de staging e deploy: [wiki/CI_E_DEPLOY.md](wiki/CI_E_DEPLOY.md).
+
 **Playwright (PR-5 / contrato HTTP):** login inválido sem vazar email, access expirado + refresh, recurso de outro usuário (404), CRUD de jardim. Na primeira máquina: `npx playwright install chromium`. O runner sobe Mongo em memória e a API na porta **3999** (`scripts/integration-test-server.mjs`, `playwright.config.ts`).
 
 ### Migração de dados e compatibilidade
 
-Versões atuais exigem `ownerId` em `gardens`, `logs` e `inventoryItems`, e documentos de refresh com `hashedToken`. Bancos criados antes dessa mudança não são compatíveis sem migração: em desenvolvimento, use `npm run seed` após subir o Mongo (apaga e recria coleções com um usuário demo). Para dados legados sem `ownerId`, existe um script opcional em `scripts/migrate-owner-id.js` (defina `MIGRATE_OWNER_ID` com o ObjectId do proprietário alvo).
+Versões atuais exigem `ownerId` em `gardens`, `logs` e `inventoryItems`, e documentos de refresh com `hashedToken`. Bancos criados antes dessa mudança não são compatíveis sem migração: em desenvolvimento, use `npm run seed` após subir o Mongo (apaga e recria coleções com um usuário demo; exige `SEED_CONFIRM=1` e, em `NODE_ENV=production`, também `SEED_ALLOW_IN_PRODUCTION=1`). Para dados legados sem `ownerId`, existe um script opcional em `scripts/migrate-owner-id.js` (defina `MIGRATE_OWNER_ID` com o ObjectId do proprietário alvo).
 
 ### Autenticação
 
-- `POST /api/auth/register` — `{ email, password }` (senha mín. 8 caracteres).
+- `POST /api/auth/register` — `{ email, password }` (email válido; senha ≥10 caracteres com maiúsculas, minúsculas e números).
 - `POST /api/auth/login` — retorna `accessToken` e `refreshToken`.
 - Demais rotas em `/api/gardens`, `/api/logs`, `/api/inventory` exigem cabeçalho `Authorization: Bearer <accessToken>`.
-- Recursos possuem `ownerId` vinculado ao `sub` do JWT; o seed cria o usuário `seed@growapp.local` / `seedseed` (sobrescreva com `SEED_USER_EMAIL` / `SEED_USER_PASSWORD` se quiser).
+- Recursos possuem `ownerId` vinculado ao `sub` do JWT; o seed cria o usuário `seed@growapp.local` (e-mail sobrescrevível com `SEED_USER_EMAIL`). Defina `SEED_USER_PASSWORD` com pelo menos 12 caracteres ou o script gera uma senha aleatória e imprime no log.
 
 ### Como rodar em desenvolvimento
 
@@ -121,15 +123,15 @@ Se tudo estiver ok, a resposta será:
 docker-compose up -d
 ```
 
-2. (Opcional) Popular o banco com dados de seed (a imagem já contém `dist/`; o comando executa `node dist/seed/seed.js`):
+2. (Opcional) Popular o banco com dados de seed (a imagem já contém `dist/`; o comando executa `node dist/seed/seed.js`). É necessário passar confirmação, por exemplo:
 
 ```bash
-docker-compose exec api npm run seed
+docker-compose exec -e SEED_CONFIRM=1 api npm run seed
 ```
 
 Em desenvolvimento local, rode `npm run build` antes do primeiro `npm run seed` (ou sempre que mudar o TypeScript do seed).
 
-3. A API fica disponível em `http://localhost:3000` (health: `GET /health`, documentação: `GET /api`).
+3. A API fica disponível em `http://localhost:3000` (health: `GET /health`; em produção `GET /api` retorna apenas metadados mínimos — fora de produção inclui descrição das rotas).
 
 4. Parar os containers:
 

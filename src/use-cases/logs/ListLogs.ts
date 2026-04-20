@@ -1,3 +1,5 @@
+const { capPaginationLimit } = require("../../config/pagination");
+
 /**
  * Caso de uso: listar logs com filtros e paginação.
  */
@@ -11,7 +13,7 @@ class ListLogs {
    * @param {{ gardenId?: string, type?: string, fromDate?: string|Date, toDate?: string|Date, limit?: number, skip?: number, actorId: string }} input
    */
   async execute(input: Record<string, unknown>) {
-    const limit = input.limit != null ? parseInt(String(input.limit), 10) : undefined;
+    const limitRaw = input.limit != null ? parseInt(String(input.limit), 10) : undefined;
     const skip = input.skip != null ? parseInt(String(input.skip), 10) : undefined;
     const filter = {
       gardenId: input.gardenId,
@@ -26,7 +28,7 @@ class ListLogs {
           ? input.toDate
           : new Date(String(input.toDate))
         : undefined,
-      limit: Number.isInteger(limit) && limit > 0 ? limit : undefined,
+      limit: capPaginationLimit(limitRaw),
       skip: Number.isInteger(skip) && skip >= 0 ? skip : undefined,
     };
     return this.logRepository.findAll(filter, input.actorId);

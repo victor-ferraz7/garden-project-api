@@ -40,7 +40,7 @@ class InventoryRepositoryMongo extends InventoryRepository {
     const doc = await InventoryItem.findOneAndUpdate(
       { id, ownerId: oid },
       { $set: { ...update, lastUpdated: new Date() } },
-      { new: true, runValidators: true }
+      { returnDocument: "after", runValidators: true }
     ).lean();
     return doc || null;
   }

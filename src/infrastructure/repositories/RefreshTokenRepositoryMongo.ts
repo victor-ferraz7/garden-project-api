@@ -1,6 +1,6 @@
 const RefreshTokenRepository = require("../../application/ports/refreshTokenRepository");
 const { RefreshToken } = require("../../models");
-const { refreshTokenMatches } = require("../refreshTokenHash");
+const { refreshTokenMatches, hashRefreshToken } = require("../refreshTokenHash");
 const { toOwnerObjectId } = require("../mongoId");
 
 class RefreshTokenRepositoryMongo extends RefreshTokenRepository {
@@ -18,6 +18,37 @@ class RefreshTokenRepositoryMongo extends RefreshTokenRepository {
       return null;
     }
     return { userId: doc.userId, jti: doc.jti };
+  }
+
+  async consumeForRotation(jti, plainRefreshToken, replacedByJti) {
+    const hashed = hashRefreshToken(plainRefreshToken);
+    const before = await RefreshToken.findOneAndUpdate(
+      {
+        jti,
+        revokedAt: null,
+        expiresAt: { $gt: new Date() },
+        hashedToken: hashed,
+      },
+      { $set: { revokedAt: new Date(), replacedByJti } },
+      { returnDocument: "before" }
+    ).lean();
+    if (!before) return null;
+    return { userId: before.userId };
+  }
+
+  async revokeIfActive(jti, plainRefreshToken) {
+    const hashed = hashRefreshToken(plainRefreshToken);
+    const before = await RefreshToken.findOneAndUpdate(
+      {
+        jti,
+        revokedAt: null,
+        expiresAt: { $gt: new Date() },
+        hashedToken: hashed,
+      },
+      { $set: { revokedAt: new Date(), replacedByJti: null } },
+      { returnDocument: "before" }
+    ).lean();
+    return !!before;
   }
 
   async revoke(jti, replacedByJti = null) {
