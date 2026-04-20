@@ -26,6 +26,9 @@ services:
     environment:
       MONGO_URI: mongodb://mongo:27017/growapp
       PORT: "3000"
+      # Apenas para desenvolvimento local via Compose — troque em produção
+      JWT_ACCESS_SECRET: docker-dev-jwt-access-secret-min-16-chars
+      JWT_REFRESH_SECRET: docker-dev-jwt-refresh-secret-min-16-chars
     depends_on:
       mongo:
         condition: service_healthy

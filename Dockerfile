@@ -1,17 +1,25 @@
-# 7.1 — Dockerfile da API
-# Base: Node 20 Alpine
+# Build TypeScript → dist, imagem final só com runtime
+FROM node:20-alpine AS build
+
+WORKDIR /app
+
+COPY package.json package-lock.json* ./
+RUN npm ci
+
+COPY tsconfig.json ./
+COPY src ./src
+RUN npm run build
+
 FROM node:20-alpine
 
 WORKDIR /app
 
-# Dependências (cache da camada se package*.json não mudar)
 COPY package.json package-lock.json* ./
-RUN npm install --omit=dev
+RUN npm ci --omit=dev
 
-# Código da aplicação
-COPY src ./src
+COPY --from=build /app/dist ./dist
 
 EXPOSE 3000
 
 ENV NODE_ENV=production
-CMD ["npm", "run", "start"]
+CMD ["node", "dist/server.js"]
