@@ -20,7 +20,7 @@ test.describe("PLANO_IMPLEMENTACAO1 §9 — integração API", () => {
 
   test("access expirado → 401; refresh válido → novo access", async ({ request }) => {
     const email = uniqueEmail("refresh");
-    const password = "password123";
+    const password = "Password123test";
     const reg = await request.post("/api/auth/register", { data: { email, password } });
     expect(reg.status()).toBe(201);
     const login = await request.post("/api/auth/login", { data: { email, password } });
@@ -43,7 +43,7 @@ test.describe("PLANO_IMPLEMENTACAO1 §9 — integração API", () => {
   });
 
   test("recurso de outro usuário → 404", async ({ request }) => {
-    const pass = "password123";
+    const pass = "Password123test";
     const emailA = uniqueEmail("usera");
     const emailB = uniqueEmail("userb");
     await request.post("/api/auth/register", { data: { email: emailA, password: pass } });
@@ -74,7 +74,7 @@ test.describe("PLANO_IMPLEMENTACAO1 §9 — integração API", () => {
 
   test("CRUD de jardim isolado por owner", async ({ request }) => {
     const email = uniqueEmail("crud");
-    const password = "password123";
+    const password = "Password123test";
     await request.post("/api/auth/register", { data: { email, password } });
     const login = await request.post("/api/auth/login", { data: { email, password } });
     const { accessToken } = await login.json();
