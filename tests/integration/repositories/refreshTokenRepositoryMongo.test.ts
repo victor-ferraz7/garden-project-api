@@ -40,6 +40,24 @@ describe("integration / RefreshTokenRepositoryMongo", () => {
     expect(await repo.findValidByJti(jti, plain)).toBeNull();
   });
 
+  it("consumeForRotation revoga atomicamente; segunda chamada falha", async () => {
+    const userId = new mongoose.Types.ObjectId();
+    const jti = "jti-rotate-1";
+    const plain = "plain-refresh-rotate";
+    const expiresAt = new Date(Date.now() + 60_000);
+    await repo.create({
+      userId,
+      jti,
+      hashedToken: hashRefreshToken(plain),
+      expiresAt,
+    });
+    const nextJti = "jti-next-1";
+    const first = await repo.consumeForRotation(jti, plain, nextJti);
+    expect(first?.userId.toString()).toBe(userId.toString());
+    const second = await repo.consumeForRotation(jti, plain, nextJti);
+    expect(second).toBeNull();
+  });
+
   it("revokeAllForUser marca sessões ativas", async () => {
     const uid = new mongoose.Types.ObjectId().toString();
     const oid = new mongoose.Types.ObjectId(uid);

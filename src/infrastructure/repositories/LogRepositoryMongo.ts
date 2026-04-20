@@ -59,7 +59,7 @@ class LogRepositoryMongo extends LogRepository {
       const doc = await Log.findOneAndUpdate(
         { _id: idMongo, ownerId: oid },
         { $set: update },
-        { new: true, runValidators: true }
+        { returnDocument: "after", runValidators: true }
       ).lean();
       return doc || null;
     } catch {

@@ -1,13 +1,28 @@
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
+const rateLimit = require("express-rate-limit");
 
 const authRoutes = require("./routes/auth.routes");
 const gardensRoutes = require("./routes/gardens.routes");
 const logsRoutes = require("./routes/logs.routes");
 const inventoryRoutes = require("./routes/inventory.routes");
 
+if (process.env.NODE_ENV === "production") {
+  const raw = process.env.CORS_ORIGIN;
+  if (!raw || !String(raw).trim()) {
+    throw new Error(
+      "Em produção defina CORS_ORIGIN com uma ou mais origens permitidas (separadas por vírgula)."
+    );
+  }
+}
+
 const app = express();
+
+const trustProxy = process.env.TRUST_PROXY;
+if (trustProxy === "1" || String(trustProxy).toLowerCase() === "true") {
+  app.set("trust proxy", 1);
+}
 
 app.use(helmet());
 
@@ -27,7 +42,18 @@ app.get("/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
+const businessApiLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 180,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 app.get("/api", (req, res) => {
+  if (process.env.NODE_ENV === "production") {
+    res.json({ name: "gp-api", status: "ok" });
+    return;
+  }
   res.json({
     name: "gp-api",
     description: "API REST para jardins, logs de cultivo e estoque.",
@@ -73,9 +99,9 @@ app.get("/api", (req, res) => {
 });
 
 app.use("/api/auth", authRoutes);
-app.use("/api/gardens", gardensRoutes);
-app.use("/api/logs", logsRoutes);
-app.use("/api/inventory", inventoryRoutes);
+app.use("/api/gardens", businessApiLimiter, gardensRoutes);
+app.use("/api/logs", businessApiLimiter, logsRoutes);
+app.use("/api/inventory", businessApiLimiter, inventoryRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: "Rota não encontrada", path: req.path });
