@@ -2,22 +2,41 @@
   "name": "gp-api",
   "version": "1.0.0",
   "description": "Backend Node.js/Express para garden notes, logs de cultivo e estoque.",
-  "main": "src/server.js",
+  "main": "dist/server.js",
   "scripts": {
-    "start": "node src/server.js",
-    "dev": "nodemon src/server.js",
-    "seed": "node src/seed/seed.js"
+    "build": "tsc",
+    "test": "npm run build && vitest run",
+    "test:watch": "npm run build && vitest",
+    "test:coverage": "npm run build && vitest run --coverage",
+    "start": "node dist/server.js",
+    "dev": "tsx watch src/server.ts",
+    "seed": "node dist/seed/seed.js",
+    "migrate:owner-id": "node scripts/migrate-owner-id.js",
+    "test:integration": "playwright test",
+    "test:all": "npm run test && npm run test:integration"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.3.2",
+    "helmet": "^8.1.0",
+    "jose": "^6.2.2",
     "mongoose": "^9.2.4"
   },
   "devDependencies": {
-    "nodemon": "^3.1.9"
+    "@playwright/test": "^1.59.1",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.6.0",
+    "@vitest/coverage-v8": "^4.1.4",
+    "mongodb-memory-server": "^11.0.1",
+    "tsx": "^4.21.0",
+    "typescript": "~5.6.3",
+    "vitest": "^4.1.4"
   }
 }
